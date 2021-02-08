@@ -182,7 +182,7 @@ namespace Apple {
 
             Console.WriteLine(string.Empty);
             Console.WriteLine("---------------------------------------------------------------------------");
-            Console.WriteLine("点群パラメータの外側の点でが構成するにメッシュの中心座標が含まれているか判定します");
+            Console.WriteLine("点群パラメータの外側の点で構成するメッシュの中心座標が含まれているか判定します");
             Console.WriteLine("含まれていたら、深さの按分計算を行います");
 
             // 深さの配列を初期化

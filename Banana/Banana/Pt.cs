@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Banana {
+﻿namespace Banana {
     public class Pt {
         private double x;
         private double y;
@@ -15,6 +9,12 @@ namespace Banana {
             this.y = y;
         }
 
+        public Pt(double x, double y, double d) {
+            this.x = x;
+            this.y = y;
+            this.d = d;
+        }
+
         public double X {
             get => x;
         }
@@ -23,7 +23,6 @@ namespace Banana {
         }
         public double D {
             get => d;
-            set => d = value;
         }
 
         public static Pt operator +(Pt v1, Pt v2) {

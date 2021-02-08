@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Banana {
     class Program {
@@ -21,27 +19,27 @@ namespace Banana {
             Pt origin = new Pt(0, 0);
 
             List<Pt> pointsL = new List<Pt> {
-                new Pt(10, 10),
-                new Pt(10, 20),
-                new Pt(10, 30),
-                new Pt(10, 40),
-                new Pt(10, 50)
+                new Pt(10, 10,  5),
+                new Pt(20, 10, 10),
+                new Pt(30, 10, 15),
+                new Pt(40, 10, 20),
+                new Pt(50, 10, 25)
             };
 
             List<Pt> pointsC = new List<Pt> {
-                new Pt(20, 10),
-                new Pt(20, 20),
-                new Pt(20, 30),
-                new Pt(20, 40),
-                new Pt(20, 50)
+                new Pt(10, 20, 25),
+                new Pt(20, 20, 20),
+                new Pt(30, 20, 15),
+                new Pt(40, 20, 10),
+                new Pt(50, 20, 5)
             };
 
             List<Pt> pointsR = new List<Pt> {
-                new Pt(30, 10),
-                new Pt(30, 20),
-                new Pt(30, 30),
-                new Pt(30, 40),
-                new Pt(30, 50)
+                new Pt(10, 30, 10),
+                new Pt(20, 30, 20),
+                new Pt(30, 30, 30),
+                new Pt(40, 30, 40),
+                new Pt(50, 30, 50)
             };
 
             Console.WriteLine(string.Empty);
@@ -139,6 +137,9 @@ namespace Banana {
             else
                 Console.WriteLine("Y 範囲内");
 
+            Depth depth = new Depth(meshLength, pointsL, pointsC, pointsR, shiftOrigin, meshPitch);
+            depth.Init();
+            depth.Execute();
 
         }
     }
