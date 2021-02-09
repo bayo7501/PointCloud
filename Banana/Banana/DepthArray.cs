@@ -5,29 +5,37 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Banana {
-    public class Depth {
+    public class DepthArray {
 
-        private List<Pt> pointsL;
-        private List<Pt> pointsC;
-        private List<Pt> pointsR;
-        private int meshLength;
-        private Pt shiftOrigin;
-        private double meshPitch;
+        private List<XYDepth> pointsL;
+        private List<XYDepth> pointsC;
+        private List<XYDepth> pointsR;
+        private readonly int meshLength;
+        private XYDepth shiftOrigin;
+        private readonly double meshPitch;
         private List<Rectangle> rectangles;
 
-        public Depth(int meshLength, List<Pt> pointsL, List<Pt> pointsC, List<Pt> pointsR, Pt shiftOrigin, double meshPitch) {
+        private short[] depths;
+
+        public short[] Depths {
+            get => depths;
+        }
+
+        public DepthArray(int meshLength, List<XYDepth> pointsL, List<XYDepth> pointsC, List<XYDepth> pointsR, XYDepth shiftOrigin, double meshPitch) {
             this.meshLength = meshLength;
             this.pointsL = pointsL;
             this.pointsC = pointsC;
             this.pointsR = pointsR;
             this.shiftOrigin = shiftOrigin;
             this.meshPitch = meshPitch;
+            int totalLength = meshLength * meshLength;
+            depths = new short[totalLength];
         }
 
-        public void Init() {
-            Console.WriteLine(string.Empty);
-            Console.WriteLine("---------------------------------------------------------------------------");
-            Console.WriteLine("点群パラメータから小さい四角形を作ります");
+        public void Create(){
+
+            Logger.Write(Logger.D, "---------------------------------------------------------------------------");
+            Logger.Write(Logger.D, "点群パラメータから小さい四角形を作ります");
 
             rectangles = new List<Rectangle>();
 
@@ -38,7 +46,7 @@ namespace Banana {
                 Rectangle rectangle = new Rectangle(pointsL[i], pointsL[i + 1], pointsC[i + 1], pointsC[i]);
                 rectangles.Add(rectangle);
             }
-            Console.WriteLine(string.Format("四角形の数:{0}", rectangles.Count));
+            Logger.Write(Logger.D, $"四角形の数:{rectangles.Count}");
             // C列の点とR列の点で構成する四角形を作る
             for (int i = 0; i < pointsC.Count; i++) {
                 if (i == pointsC.Count - 1)
@@ -46,23 +54,17 @@ namespace Banana {
                 Rectangle rectangle = new Rectangle(pointsC[i], pointsC[i + 1], pointsR[i + 1], pointsR[i]);
                 rectangles.Add(rectangle);
             }
-            Console.WriteLine(string.Format("四角形の数:{0}", rectangles.Count));
-        }
+            Logger.Write(Logger.D, $"四角形の数:{rectangles.Count}");
 
-        public void Execute(){
-            Console.WriteLine(string.Empty);
-            Console.WriteLine("---------------------------------------------------------------------------");
-            Console.WriteLine("点群パラメータの外側の点でが構成するにメッシュの中心座標が含まれているか判定します");
-            Console.WriteLine("含まれていたら、深さの按分計算を行います");
+            Logger.Write(Logger.D, "---------------------------------------------------------------------------");
+            Logger.Write(Logger.D, "点群パラメータの外側の点でが構成するにメッシュの中心座標が含まれているか判定します");
+            Logger.Write(Logger.D, "含まれていたら、深さの按分計算を行います");
 
             // 深さの配列を初期化
-            int totalLength = meshLength * meshLength;
-            short[] depths = new short[totalLength];
             for (int i = 0; i < depths.Length; i++) {
                 // defaultは0なので、-1で初期化
                 depths[i] = -1;
             }
-            //Console.ReadLine();
 
             // メッシュの中心座標を求め、その中心座標と点群パラメータの外側の点でが構成する矩形との内外判定します
 
@@ -92,7 +94,7 @@ namespace Banana {
             // X中央末尾
             outlineX.Add(pointsC[pointsC.Count - 1].X);
             // X右
-            for (int i = pointsR.Count; i < 0; i--)
+            for (int i = pointsR.Count; i > 0; i--)
                 // 末尾から順にX座標をリストに追加
                 outlineX.Add(pointsR[i - 1].X);
             // X中央先頭
@@ -107,7 +109,7 @@ namespace Banana {
             // Y中央末尾
             outlineY.Add(pointsC[pointsC.Count - 1].Y);
             // Y右
-            for (int i = pointsR.Count; i < 0; i--)
+            for (int i = pointsR.Count; i > 0; i--)
                 // 末尾から順にY座標をリストに追加
                 outlineY.Add(pointsR[i - 1].Y);
             // Y中央先頭
@@ -116,18 +118,22 @@ namespace Banana {
             double seekStartX = 0.25 + shiftOrigin.X;
             double seekStartY = 0.25 + shiftOrigin.Y;
 
-            for (int x = 0; x < meshLength; x++) {
-                for (int y = 0; y < meshLength; y++) {
-                    double seekX = seekStartX + x * meshPitch;
-                    double seekY = seekStartY + y * meshPitch;
+            for (int y = 0; y < meshLength; y++) {
+                for (int x = 0; x < meshLength; x++) {
+
+                    // 走査対象(メッシュの中心座標)
+                    double seekX = seekStartX + meshPitch * x;
+                    double seekY = seekStartY + meshPitch * y;
+                    Logger.Write(Logger.D, $"走査対象 X:{seekX} Y:{seekY}");
+
                     int result = CrossCount(seekX, seekY, outlineX, outlineY);
                     if (result == 0) {
                         // 点群パラメータの外側の点で構成する矩形の外側にメッシュの中心がある場合
-                        //Console.WriteLine(string.Format("X:{0} Y:{1} {2}", seekX, seekY, "outside"));
+                        depths[y * meshLength + x] = -1;
+                        continue;
                     } else {
 
                         // 点群パラメータの外側の点で構成する矩形の内側にメッシュの中心がある場合
-                        //Console.WriteLine(string.Format("X:{0} Y:{1} {2}", seekX, seekY, "inside"));
 
                         // さらに小さい単位でどの四角に含まれているか
                         for (int i = 0; i < rectangles.Count; i++) {
@@ -145,28 +151,58 @@ namespace Banana {
                             rectangleY.Add(rectangle.P3.Y);
                             if (CrossCount(seekX, seekY, rectangleX, rectangleY) != 0) {
                                 // 小さい単位の四角の内側にメッシュの中心がある場合
-                                Pt p0 = new Pt(rectangle.P0.X, rectangle.P0.Y);
-                                Pt p2 = new Pt(rectangle.P2.X, rectangle.P2.Y);
-                                Pt p = new Pt(seekX, seekY);
-                                double j = Pt.OnSeg2(p0, p2, p);
+                                XYDepth p0 = new XYDepth(rectangle.P0.X, rectangle.P0.Y);
+                                XYDepth p2 = new XYDepth(rectangle.P2.X, rectangle.P2.Y);
+                                XYDepth p = new XYDepth(seekX, seekY);
+                                double j = XYDepth.OnSeg2(p0, p2, p);
 
-                                Console.WriteLine(string.Format("線分AB A(X:{0} Y:{1}) B(X:{2} Y:{3})", p0.X, p0.Y, p2.X, p2.Y));
-                                Console.WriteLine(string.Format("点P    X:{0} Y:{1} {2}", seekX, seekY, j));
+                                Logger.Write(Logger.D, $"線分AB A(X:{p0.X} Y:{p0.Y}) B(X:{p2.X} Y:{p2.Y})");
+                                Logger.Write(Logger.D, $"点P    X:{seekX} Y:{seekY} {j}");
 
                                 // 小さい単位の資格のどこにメッシュの中心があるか
                                 if (j == 0) {
                                     // 線上
-                                    Console.WriteLine("オンザライン");
-                                } else if (j > 0) {
-                                    // プラス側
-                                    Console.WriteLine("プラス");
+                                    Logger.Write(Logger.D, "0");
 
-                                    Pt A = rectangle.P0;
-                                    Pt B = rectangle.P2;
-                                    Pt O = rectangle.P1;
-                                    Pt xy = new Pt(seekX, seekY);
+                                    XYDepth A = rectangle.P0;
+                                    XYDepth B = rectangle.P2;
+                                    XYDepth O = rectangle.P1;
+                                    XYDepth xy = new XYDepth(seekX, seekY);
 
-                                    Pt pt;
+                                    // 対角線の両端の深さ
+                                    double ab = getDistance(A.X, A.Y, B.X, B.Y);
+                                    // 対角線の両端と対角線上の交点までの長さと割合
+                                    double ap = getDistance(A.X, A.Y, xy.X, xy.Y);
+                                    double bp = getDistance(B.X, B.Y, xy.X, xy.Y);
+
+                                    double span = Math.Abs(A.D - B.D);
+                                    if (span == 0) {
+                                        Logger.Write(Logger.D, $"{A.D}");
+                                        depths[y * meshLength + x] = (short)(A.D * 10.0);
+                                        break;
+
+                                    } else {
+                                        // 深さを算出
+                                        double w = span * ap / ab;
+                                        double depth = 0;
+                                        if (A.D > B.D) {
+                                            depth = A.D - w;
+                                        } else {
+                                            depth = A.D + w;
+                                        }
+                                        Logger.Write(Logger.D, $"{depth}");
+                                        depths[y * meshLength + x] = (short)(depth * 10.0);
+                                        break;
+                                    }
+
+                                } else if (j < 0) {
+
+                                    XYDepth A = rectangle.P0;
+                                    XYDepth B = rectangle.P2;
+                                    XYDepth O = rectangle.P1;
+                                    XYDepth xy = new XYDepth(seekX, seekY);
+
+                                    XYDepth pt;
                                     // 対角線に向かい合う点とメッシュの中心を通った対角線の交点座標
                                     if (Intersection(A, B, O, xy, out pt)) {
                                         // 対角線の両端の深さ
@@ -177,28 +213,53 @@ namespace Banana {
 
                                         double span = Math.Abs(A.D - B.D);
                                         if (span == 0) {
-                                            Console.WriteLine(string.Format("{0}", A.D));
+                                            Logger.Write(Logger.D, $"{A.D}");
+                                            depths[y * meshLength + x] = (short)(A.D * 10.0);
+                                            break;
                                         } else {
                                             // 深さを算出
                                             double w = span * ap / ab;
-                                            double depth = 0;
                                             if (A.D > B.D) {
-                                                depth = A.D - w;
+                                                pt.D = A.D - w;
                                             } else {
-                                                depth = A.D + w;
+                                                pt.D = A.D + w;
                                             }
-                                            Console.WriteLine(string.Format("{0}", depth));
+
+                                            // 対角線の交点と及び対角線に向かい合う点の距離から
+                                            // メッシュの中心の深さを計算
+                                            double aa = getDistance(pt.X, pt.Y, O.X, O.Y);
+                                            // 対角線の両端と対角線上の交点までの長さと割合
+                                            double bb = getDistance(pt.X, pt.Y, xy.X, xy.Y);
+                                            double cc = getDistance(O.X, O.Y, xy.X, xy.Y);
+
+                                            double dd = Math.Abs(pt.D - O.D);
+                                            if (dd == 0) {
+                                                Logger.Write(Logger.D, $"{dd}");
+                                                depths[y * meshLength + x] = (short)(pt.D * 10.0);
+                                                break;
+                                            } else {
+                                                // 深さを算出
+                                                double ee = dd * bb / aa;
+                                                double ff = 0;
+                                                if (pt.D > O.D) {
+                                                    ff = pt.D - ee;
+                                                } else {
+                                                    ff = pt.D + ee;
+                                                }
+                                                Logger.Write(Logger.D, $"{ff}");
+                                                depths[y * meshLength + x] = (short)(ff * 10.0);
+                                                break;
+                                            }
                                         }
                                     }
-                                } else if (j < 0) {
-                                    // マイナス側
-                                    Console.WriteLine("マイナス");
-                                    Pt A = rectangle.P0;
-                                    Pt B = rectangle.P2;
-                                    Pt O = rectangle.P3;
-                                    Pt xy = new Pt(seekX, seekY);
+                                } else if (j > 0) {
 
-                                    Pt pt;
+                                    XYDepth A = rectangle.P0;
+                                    XYDepth B = rectangle.P2;
+                                    XYDepth O = rectangle.P3;
+                                    XYDepth xy = new XYDepth(seekX, seekY);
+
+                                    XYDepth pt;
                                     if (Intersection(A, B, O, xy, out pt)) {
                                         // 対角線の両端の深さ
                                         double ab = getDistance(A.X, A.Y, B.X, B.Y);
@@ -208,23 +269,47 @@ namespace Banana {
 
                                         double span = Math.Abs(A.D - B.D);
                                         if (span == 0) {
-                                            Console.WriteLine(string.Format("{0}", A.D));
+                                            Logger.Write(Logger.D, $"{A.D}");
+                                            depths[y * meshLength + x] = (short)(A.D * 10.0);
+                                            break;
                                         } else {
                                             // 深さを算出
                                             double w = span * ap / ab;
-                                            double depth = 0;
                                             if (A.D > B.D) {
-                                                depth = A.D - w;
+                                                pt.D = A.D - w;
                                             } else {
-                                                depth = A.D + w;
+                                                pt.D = A.D + w;
                                             }
-                                            Console.WriteLine(string.Format("{0}", depth));
+
+                                            // 対角線の交点と及び対角線に向かい合う点の距離から
+                                            // メッシュの中心の深さを計算
+                                            double aa = getDistance(pt.X, pt.Y, O.X, O.Y);
+                                            // 対角線の両端と対角線上の交点までの長さと割合
+                                            double bb = getDistance(pt.X, pt.Y, xy.X, xy.Y);
+                                            double cc = getDistance(O.X, O.Y, xy.X, xy.Y);
+
+                                            double dd = Math.Abs(pt.D - O.D);
+                                            if (dd == 0) {
+                                                Logger.Write(Logger.D, $"{dd}");
+                                                depths[y * meshLength + x] = (short)(pt.D * 10.0);
+                                                break;
+                                            } else {
+                                                // 深さを算出
+                                                double ee = dd * bb / aa;
+                                                double ff = 0;
+                                                if (pt.D > O.D) {
+                                                    ff = pt.D - ee;
+                                                } else {
+                                                    ff = pt.D + ee;
+                                                }
+                                                Logger.Write(Logger.D, $"{ff}");
+                                                depths[y * meshLength + x] = (short)(ff * 10.0);
+                                                break;
+                                            }
                                         }
                                     }
                                 }
-                                break;
                             }
-
                         }
 
                     }
@@ -232,9 +317,8 @@ namespace Banana {
             }
 
 
-            Console.WriteLine(string.Empty);
-            Console.WriteLine("---------------------------------------------------------------------------");
-            Console.WriteLine("点群パラメータに含まれていたメッシュの中心座標と三角形の底辺から深さを案分計算します");
+            //Logger.Write(Logger.D, "---------------------------------------------------------------------------");
+            //Logger.Write(Logger.D, "点群パラメータに含まれていたメッシュの中心座標と三角形の底辺から深さを案分計算します");
         }
 
         protected double getDistance(double x, double y, double x2, double y2) {
@@ -307,7 +391,16 @@ namespace Banana {
             return crossCount;
         }
 
-        private bool Intersection(Pt p0, Pt p1, Pt p2, Pt p3, out Pt p) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="p0">対角線の点P0</param>
+        /// <param name="p1">対角線の点P1</param>
+        /// <param name="p2">メッシュの中心の点P2</param>
+        /// <param name="p3">対角線と向かい合う点P3</param>
+        /// <param name="p">P0-P1とP2-P3の交点</param>
+        /// <returns></returns>
+        private bool Intersection(XYDepth p0, XYDepth p1, XYDepth p2, XYDepth p3, out XYDepth p) {
             p = null;
             double s, t;
 
@@ -347,9 +440,9 @@ namespace Banana {
             double x = (c1 * b2 - c2 * b1) / (a1 * b2 - a2 * b1);
             double y = (a1 * c2 - a2 * c1) / (a1 * b2 - a2 * b1);
 
-            Console.WriteLine(string.Format("交点: x={0}, y={1}", x, y));
+            Logger.Write(Logger.D, $"交点: x={x}, y={y}");
 
-            p = new Pt(x, y);
+            p = new XYDepth(x, y);
 
             return true;
         }

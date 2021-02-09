@@ -81,7 +81,7 @@ namespace Banana {
                 outY = localY;
                 return true;
             } catch (Exception e) {
-                Console.WriteLine(string.Format("{0}", e.ToString()));
+                Logger.Write(Logger.W, $"{e.ToString()}");
                 return false;
             }
         }
@@ -115,7 +115,7 @@ namespace Banana {
                 outY = localShiftY;
                 return true;
             } catch (Exception e) {
-                Console.WriteLine(string.Format("{0}", e.ToString()));
+                Logger.Write(Logger.W, $"{e.ToString()}");
                 return false;
             }
         }
