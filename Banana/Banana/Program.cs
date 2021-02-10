@@ -459,14 +459,14 @@ namespace Banana {
             Logger.Write(Logger.V, $"　{ts.Hours}時間 {ts.Minutes}分 {ts.Seconds}秒 {ts.Milliseconds}ミリ秒");
             Logger.Write(Logger.V, $"　{sw.ElapsedMilliseconds}ミリ秒");
 
-            int length = depthArray.Depths.Length;
-            double seekStartX = 0.25 + shiftOrigin.X;
-            double seekStartY = 0.25 + shiftOrigin.Y;
+            //int length = depthArray.Depths.Length;
+            //double seekStartX = 0.25 + shiftOrigin.X;
+            //double seekStartY = 0.25 + shiftOrigin.Y;
 
-            for (int i = 0; i < length; i++) {
-                int y = Math.DivRem(i, meshLength, out int x);
-                Logger.Write(Logger.V, $"X:{ seekStartX + x * meshPitch } Y:{seekStartY + y * meshPitch} Depth:{depthArray.Depths[i] / 10.0}");
-            }
+            //for (int i = 0; i < length; i++) {
+            //    int y = Math.DivRem(i, meshLength, out int x);
+            //    Logger.Write(Logger.V, $"X:{ seekStartX + x * meshPitch } Y:{seekStartY + y * meshPitch} Depth:{depthArray.Depths[i] / 10.0}");
+            //}
 
             Console.ReadLine();
         }
