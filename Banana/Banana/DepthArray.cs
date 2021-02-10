@@ -437,8 +437,10 @@ namespace Banana {
             double b2 = p3.Y - p2.Y;
             double c2 = (p3.Y - p2.Y) * p2.X - (p3.X - p2.X) * p2.Y;
 
-            double x = (c1 * b2 - c2 * b1) / (a1 * b2 - a2 * b1);
-            double y = (a1 * c2 - a2 * c1) / (a1 * b2 - a2 * b1);
+            //double x = (c1 * b2 - c2 * b1) / (a1 * b2 - a2 * b1);
+            //double y = (a1 * c2 - a2 * c1) / (a1 * b2 - a2 * b1);
+            double y = (c1 * b2 - c2 * b1) / (a1 * b2 - a2 * b1);
+            double x = (a1 * c2 - a2 * c1) / (a1 * b2 - a2 * b1);
 
             Logger.Write(Logger.D, $"交点: x={x}, y={y}");
 
