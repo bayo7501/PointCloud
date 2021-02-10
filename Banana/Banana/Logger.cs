@@ -4,6 +4,10 @@ namespace Banana {
     class Logger {
 
         /// <summary>
+        /// non
+        /// </summary>
+        public static uint N = 0x00000000;
+        /// <summary>
         /// erro
         /// </summary>
         public static uint E = 0x10000000;
@@ -33,8 +37,8 @@ namespace Banana {
         public static void Write(uint level, string message) {
             if ((level & _level) != 0) {
 
-                System.Diagnostics.Debug.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} {message}");
-                //Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} {message}");
+                //System.Diagnostics.Debug.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} {message}");
+                Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} {message}");
             }
         }
     }

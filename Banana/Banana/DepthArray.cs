@@ -154,7 +154,7 @@ namespace Banana {
                                 XYDepth p0 = new XYDepth(rectangle.P0.X, rectangle.P0.Y);
                                 XYDepth p2 = new XYDepth(rectangle.P2.X, rectangle.P2.Y);
                                 XYDepth p = new XYDepth(seekX, seekY);
-                                double j = XYDepth.OnSeg2(p0, p2, p);
+                                double j = Math2.OnSeg(p0, p2, p);
 
                                 Logger.Write(Logger.D, $"線分AB A(X:{p0.X} Y:{p0.Y}) B(X:{p2.X} Y:{p2.Y})");
                                 Logger.Write(Logger.D, $"点P    X:{seekX} Y:{seekY} {j}");
