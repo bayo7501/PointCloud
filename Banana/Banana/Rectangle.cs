@@ -2,32 +2,42 @@
 
     public class Rectangle {
 
-        private readonly XYDepth p0 = null;
-        private readonly XYDepth p1 = null;
-        private readonly XYDepth p2 = null;
-        private readonly XYDepth p3 = null;
+        /*
+         *    B  +---+---+---+  C
+         *       |           |
+         *       +           +
+         *       |           |
+         *       +           +
+         *       |           |
+         *    A  +---+---+---+  D
+         */
 
-        public Rectangle(XYDepth p0, XYDepth p1, XYDepth p2, XYDepth p3) {
-            this.p0 = p0;
-            this.p1 = p1;
-            this.p2 = p2;
-            this.p3 = p3;
+        private readonly XYD a = null;
+        private readonly XYD b = null;
+        private readonly XYD c = null;
+        private readonly XYD d = null;
+
+        public Rectangle(XYD a, XYD b, XYD c, XYD d) {
+            this.a = a;
+            this.b = b;
+            this.c = c;
+            this.d = d;
         }
 
-        public XYDepth P0 {
-            get => p0;
+        public XYD A {
+            get => a;
         }
 
-        public XYDepth P1 {
-            get => p1;
+        public XYD B {
+            get => b;
         }
 
-        public XYDepth P2 {
-            get => p2;
+        public XYD C {
+            get => c;
         }
 
-        public XYDepth P3 {
-            get => p3;
+        public XYD D {
+            get => d;
         }
     }
 }

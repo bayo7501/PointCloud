@@ -1,10 +1,11 @@
 ﻿using System;
 
 namespace Banana {
+
     class Logger {
 
         /// <summary>
-        /// non
+        /// none
         /// </summary>
         public static uint N = 0x00000000;
         /// <summary>
@@ -22,21 +23,24 @@ namespace Banana {
         /// <summary>
         /// debug
         /// </summary>
-        public static uint D = 0x00000001;
+        public static uint D = 0x00000010;
         /// <summary>
-        /// performance
+        /// verbose
         /// </summary>
-        public static uint P = 0x00000100;
+        public static uint V = 0x00000001;
 
         public static uint _level = E;
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="level">出力レベル(複数設定した場合、I + Dで両方出力可)</param>
         public Logger(uint level) {
             _level = level;
         }
 
         public static void Write(uint level, string message) {
             if ((level & _level) != 0) {
-
                 //System.Diagnostics.Debug.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} {message}");
                 Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} {message}");
             }

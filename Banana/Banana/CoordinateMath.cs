@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Banana {
-    class Math2 {
+    class CoordinateMath {
 
         /// <summary>
         /// 度からラジアンへ
@@ -132,24 +128,23 @@ namespace Banana {
         }
 
         /// <summary>
+        /// 平面での線と点の位置関係
+        /// ・｜
+        /// ｜・
+        /// 
         /// 点p1 - 点p2 を結ぶ線分の左右どちらに 点q があるか?
         /// </summary>
         /// <param name="p1"></param>
         /// <param name="p2"></param>
         /// <param name="q"></param>
         /// <returns></returns>
-        public static double OnSeg(XYDepth p1, XYDepth p2, XYDepth q) {
-
+        public static double OnSeg(XYD p1, XYD p2, XYD q) {
             double vx1 = p2.X - p1.X;
             double vy1 = p2.Y - p1.Y;
             double vx2 = q.X - p1.X;
             double vy2 = q.Y - p1.Y;
             double ans = vx1 * vy2 - vy1 * vx2;
-
             return ans;
         }
-
-
-
     }
 }
