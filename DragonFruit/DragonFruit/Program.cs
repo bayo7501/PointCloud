@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Cherry {
+namespace DragonFruit {
     class Program {
 
         /// <summary>
@@ -16,7 +16,7 @@ namespace Cherry {
 
         static void Main(string[] args) {
 
-            Logger logger = new Logger(Logger.V);
+            Logger logger = new Logger(Logger.V + Logger.D);
 
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
