@@ -16,7 +16,7 @@ namespace DragonFruit {
 
         static void Main(string[] args) {
 
-            Logger logger = new Logger(Logger.V + Logger.D);
+            Logger logger = new Logger(Logger.V);
 
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
