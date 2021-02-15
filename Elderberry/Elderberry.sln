@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1401
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elderberry", "Elderberry\Elderberry.csproj", "{614BF802-F397-4156-BB8A-D0F705239328}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{614BF802-F397-4156-BB8A-D0F705239328}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{614BF802-F397-4156-BB8A-D0F705239328}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{614BF802-F397-4156-BB8A-D0F705239328}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{614BF802-F397-4156-BB8A-D0F705239328}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DB3B9B02-AA8F-493C-A18E-B625216E271C}
+	EndGlobalSection
+EndGlobal
