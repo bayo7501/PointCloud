@@ -34,8 +34,8 @@ namespace Elderberry {
 
         public void Create() {
 
-            Logger.Write(Logger.D, "---------------------------------------------------------------------------");
-            Logger.Write(Logger.D, "点群パラメータから小さい四角形を作ります");
+            //Logger.Write(Logger.D, "---------------------------------------------------------------------------");
+            //Logger.Write(Logger.D, "点群パラメータから小さい四角形を作ります");
 
             rectangles = new List<Rectangle>();
 
@@ -56,11 +56,11 @@ namespace Elderberry {
 
             }
 
-            Logger.Write(Logger.D, $"四角形の数:{rectangles.Count}");
+            //Logger.Write(Logger.D, $"四角形の数:{rectangles.Count}");
 
-            Logger.Write(Logger.D, "---------------------------------------------------------------------------");
-            Logger.Write(Logger.D, "点群パラメータの外側の点でが構成するにメッシュの中心座標が含まれているか判定します");
-            Logger.Write(Logger.D, "含まれていたら、深さの按分計算を行います");
+            //Logger.Write(Logger.D, "---------------------------------------------------------------------------");
+            //Logger.Write(Logger.D, "点群パラメータの外側の点でが構成するにメッシュの中心座標が含まれているか判定します");
+            //Logger.Write(Logger.D, "含まれていたら、深さの按分計算を行います");
 
             // 深さの配列を初期化
             for (int i = 0; i < depths.Length; i++) {
@@ -203,7 +203,7 @@ namespace Elderberry {
                 double seekStartX = 0.25 + minX;
                 // 深さ算出処理開始点Y
                 double seekStartY = 0.25 + minY;
-                Logger.Write(Logger.D, $"XY開始座標 X:{seekStartX} Y:{seekStartY}");
+                //Logger.Write(Logger.D, $"XY開始座標 X:{seekStartX} Y:{seekStartY}");
 
                 for (int y = 0; y < meshLengthY; y++) {
                     // 走査対象のメッシュ中心点Y
@@ -214,7 +214,7 @@ namespace Elderberry {
 
                         // 走査対象のメッシュ中心点X
                         double seekX = seekStartX + meshPitch * x;
-                        Logger.Write(Logger.D, $"走査対象 X:{seekX} Y:{seekY}");
+                        //Logger.Write(Logger.D, $"走査対象 X:{seekX} Y:{seekY}");
 
                         List<double> rectangleX = new List<double>();
                         rectangleX.Add(rectangle.A.X);
@@ -238,8 +238,8 @@ namespace Elderberry {
                             // 小さい四角のどこにメッシュの中心があるか
                             double ans = CoordinateMath.OnSeg(A, C, P);
 
-                            Logger.Write(Logger.D, $"線分AC A(X:{A.X} Y:{A.Y}) C(X:{C.X} Y:{C.Y})");
-                            Logger.Write(Logger.D, $"点P    X:{seekX} Y:{seekY} {ans}");
+                            //Logger.Write(Logger.D, $"線分AC A(X:{A.X} Y:{A.Y}) C(X:{C.X} Y:{C.Y})");
+                            //Logger.Write(Logger.D, $"点P    X:{seekX} Y:{seekY} {ans}");
 
                             if (ans == 0) {
                                 // 線分ACの上
@@ -254,7 +254,7 @@ namespace Elderberry {
                                 // 点Aと点Cの深さの差
                                 double span = Math.Abs(A.D - C.D);
                                 if (span == 0) {
-                                    Logger.Write(Logger.D, $"{A.D}");
+                                    //Logger.Write(Logger.D, $"{A.D}");
                                     depths[y * meshLength + x] = (short)(A.D * 10.0);
                                     continue;
                                 } else {
@@ -266,7 +266,7 @@ namespace Elderberry {
                                     } else {
                                         depth = A.D + d;
                                     }
-                                    Logger.Write(Logger.D, $"{depth}");
+                                    //Logger.Write(Logger.D, $"{depth}");
                                     depths[y * meshLength + x] = (short)(depth * 10.0);
                                     continue;
                                 }
@@ -296,7 +296,7 @@ namespace Elderberry {
                                     // 点Aと点Cの深さの差
                                     double span = Math.Abs(A.D - C.D);
                                     if (span == 0) {
-                                        Logger.Write(Logger.D, $"{A.D}");
+                                        //Logger.Write(Logger.D, $"{A.D}");
                                         depths[y * meshLength + x] = (short)(A.D * 10.0);
                                         continue;
                                     } else {
@@ -318,7 +318,7 @@ namespace Elderberry {
                                         // 点Bと点Oの深さの差
                                         span = Math.Abs(O.D - _B.D);
                                         if (span == 0) {
-                                            Logger.Write(Logger.D, $"{span}");
+                                            //Logger.Write(Logger.D, $"{span}");
                                             depths[y * meshLength + x] = (short)(O.D * 10.0);
                                             continue;
                                         } else {
@@ -328,7 +328,7 @@ namespace Elderberry {
                                             } else {
                                                 depth = O.D + d;
                                             }
-                                            Logger.Write(Logger.D, $"{depth}");
+                                            //Logger.Write(Logger.D, $"{depth}");
                                             depths[y * meshLength + x] = (short)(depth * 10.0);
                                             continue;
                                         }
@@ -354,7 +354,7 @@ namespace Elderberry {
                                     double co = getDistance(C.X, C.Y, O.X, O.Y);
                                     double span = Math.Abs(A.D - C.D);
                                     if (span == 0) {
-                                        Logger.Write(Logger.D, $"{A.D}");
+                                        //Logger.Write(Logger.D, $"{A.D}");
                                         depths[y * meshLength + x] = (short)(A.D * 10.0);
                                         continue;
                                     } else {
@@ -369,7 +369,7 @@ namespace Elderberry {
                                         double pd = getDistance(_D.X, _D.Y, P.X, P.Y);
                                         span = Math.Abs(O.D - _D.D);
                                         if (span == 0) {
-                                            Logger.Write(Logger.D, $"{span}");
+                                            //Logger.Write(Logger.D, $"{span}");
                                             depths[y * meshLength + x] = (short)(O.D * 10.0);
                                             continue;
                                         } else {
@@ -379,7 +379,7 @@ namespace Elderberry {
                                             } else {
                                                 depth = O.D + d;
                                             }
-                                            Logger.Write(Logger.D, $"{depth}");
+                                            //Logger.Write(Logger.D, $"{depth}");
                                             depths[y * meshLength + x] = (short)(depth * 10.0);
                                             continue;
                                         }
@@ -515,7 +515,7 @@ namespace Elderberry {
             double y = (c1 * b2 - c2 * b1) / (a1 * b2 - a2 * b1);
             double x = (a1 * c2 - a2 * c1) / (a1 * b2 - a2 * b1);
 
-            Logger.Write(Logger.D, $"交点: x={x}, y={y}");
+            //Logger.Write(Logger.D, $"交点: x={x}, y={y}");
 
             p = new XYD(x, y);
 

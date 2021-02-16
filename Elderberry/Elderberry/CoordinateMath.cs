@@ -77,7 +77,7 @@ namespace Elderberry {
                 outY = localY;
                 return true;
             } catch (Exception e) {
-                Logger.Write(Logger.W, $"{e.ToString()}");
+                //Logger.Write(Logger.W, $"{e.ToString()}");
                 return false;
             }
         }
@@ -111,7 +111,7 @@ namespace Elderberry {
                 outY = localShiftY;
                 return true;
             } catch (Exception e) {
-                Logger.Write(Logger.W, $"{e.ToString()}");
+                //Logger.Write(Logger.W, $"{e.ToString()}");
                 return false;
             }
         }

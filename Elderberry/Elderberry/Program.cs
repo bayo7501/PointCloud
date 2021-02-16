@@ -42,15 +42,15 @@ namespace Elderberry {
                 y += 4;
             }
 
-            Logger.Write(Logger.D, "---------------------------------------------------------------------------");
-            Logger.Write(Logger.D, "真北を上に方向を決める");
+            //Logger.Write(Logger.D, "---------------------------------------------------------------------------");
+            //Logger.Write(Logger.D, "真北を上に方向を決める");
             // 公共座標で扱っているので縦軸X、横軸Yで考える（数学軸なら縦軸Y、横軸X）
             double t = Math.Atan2(0 - origin.Y, 1 - origin.X);
             // 指定したモードの範囲内にラジアンを収める
             double direction = CoordinateMath.Clamp(2, t);
 
-            Logger.Write(Logger.D, "---------------------------------------------------------------------------");
-            Logger.Write(Logger.D, "点群パラメータに最も近い位置に原点を寄せたときの原点座標を求めます");
+            //Logger.Write(Logger.D, "---------------------------------------------------------------------------");
+            //Logger.Write(Logger.D, "点群パラメータに最も近い位置に原点を寄せたときの原点座標を求めます");
 
             double minX = double.NaN;
             double minY = double.NaN;
@@ -91,11 +91,11 @@ namespace Elderberry {
             CoordinateMath.ToPublic(minX, minY, origin.X, origin.Y, -direction, ref originX, ref originY);
 
             XYD shiftOrigin = new XYD(originX, originY);
-            Logger.Write(Logger.D, $"原点座標 X:0 → {shiftOrigin.X}, Y:0 → {shiftOrigin.Y}");
+            //Logger.Write(Logger.D, $"原点座標 X:0 → {shiftOrigin.X}, Y:0 → {shiftOrigin.Y}");
 
-            Logger.Write(Logger.D, "---------------------------------------------------------------------------");
-            Logger.Write(Logger.D, $"点群パラメータが {meshLength}×{meshLength} のメッシュに収まるかチェックします");
-            Logger.Write(Logger.D, $"メートル換算で {meshLength * meshPitch}m × {meshLength * meshPitch}m");
+            //Logger.Write(Logger.D, "---------------------------------------------------------------------------");
+            //Logger.Write(Logger.D, $"点群パラメータが {meshLength}×{meshLength} のメッシュに収まるかチェックします");
+            //Logger.Write(Logger.D, $"メートル換算で {meshLength * meshPitch}m × {meshLength * meshPitch}m");
 
             double maxX = double.NaN;
             double maxY = double.NaN;
@@ -113,17 +113,17 @@ namespace Elderberry {
 
             }
 
-            Logger.Write(Logger.D, $"点群パラメータのうち最も遠い点 X:{maxX} Y:{maxY}");
+            //Logger.Write(Logger.D, $"点群パラメータのうち最も遠い点 X:{maxX} Y:{maxY}");
 
             // MeshLength * MeshLength に収まっているか
             // 最も遠い公共座標(単位:m)をマス目換算して 50 / 0.5 = 100
             // シフト原点もマス目換算したもので引き算。
             // 使用するマス目がメッシュサイズの上限を超えていないかチェック
 
-            if (meshLength >= maxX / meshPitch - shiftOrigin.X / meshPitch & meshLength >= maxY / meshPitch - shiftOrigin.Y / meshPitch)
-                Logger.Write(Logger.D, "indide");
-            else
-                Logger.Write(Logger.D, $"outside x:{maxX} y:{maxY}");
+            //if (meshLength >= maxX / meshPitch - shiftOrigin.X / meshPitch & meshLength >= maxY / meshPitch - shiftOrigin.Y / meshPitch)
+            //    Logger.Write(Logger.D, "indide");
+            //else
+            //    Logger.Write(Logger.D, $"outside x:{maxX} y:{maxY}");
 
             DepthArray depthArray = new DepthArray(meshLength, xyPoints, shiftOrigin, meshPitch);
             depthArray.Create();
