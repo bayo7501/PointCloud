@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Elderberry {
     class Program {
@@ -35,11 +37,11 @@ namespace Elderberry {
                 for (int xPitch = 0; xPitch < 250; xPitch++) {
                     XYD xyd = new XYD(x, y, d);
                     xPoints.Add(xyd);
-                    x += 20;
+                    x += 10;
                 }
                 x = 1;
                 xyPoints.Add(xPoints);
-                y += 4;
+                y += 2;
             }
 
             //Logger.Write(Logger.D, "---------------------------------------------------------------------------");
@@ -129,7 +131,6 @@ namespace Elderberry {
             depthArray.Create();
 
             sw.Stop();
-            Logger.Write(Logger.V, "END");
 
             Logger.Write(Logger.V, "■処理にかかった時間");
             TimeSpan ts = sw.Elapsed;
@@ -141,10 +142,27 @@ namespace Elderberry {
             double seekStartX = 0.25 + shiftOrigin.X;
             double seekStartY = 0.25 + shiftOrigin.Y;
 
-            //for (int i = 0; i < length; i++) {
-            //    int _y = Math.DivRem(i, meshLength, out int _x);
-            //    Logger.Write(Logger.V, $"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{depthArray.Depths[i] / 10.0}");
-            //}
+            if(File.Exists("test.txt")){
+                File.Delete("test.txt");
+            }
+            StreamWriter writer = new StreamWriter("test.txt", true, Encoding.UTF8);
+            for (int i = 0; i < length; i++) {
+                int _y = Math.DivRem(i, meshLength, out int _x);
+                //Logger.Write(Logger.V, $"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{depthArray.Depths[i] / 10.0}");
+                try {
+                    if (depthArray.Depths[i] == -1) {
+                        writer.WriteLine($"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{depthArray.Depths[i]}");
+                    } else {
+                        writer.WriteLine($"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{depthArray.Depths[i] / 10.0}");
+                    }
+
+                } catch (Exception e) {
+                    //Logger.Write(Logger.E, e.ToString());
+                    break;
+                }
+            }
+            writer.Close();
+            Logger.Write(Logger.V, "END");
 
             Console.ReadLine();
         }
