@@ -1,7 +1,6 @@
 ﻿using System;
 
 namespace FingerLime {
-
     class CoordinateMath {
 
         /// <summary>
@@ -78,7 +77,7 @@ namespace FingerLime {
                 outY = localY;
                 return true;
             } catch (Exception e) {
-                Logger.Write(Logger.W, $"{e.ToString()}");
+                //Logger.Write(Logger.W, $"{e.ToString()}");
                 return false;
             }
         }
@@ -112,7 +111,7 @@ namespace FingerLime {
                 outY = localShiftY;
                 return true;
             } catch (Exception e) {
-                Logger.Write(Logger.W, $"{e.ToString()}");
+                //Logger.Write(Logger.W, $"{e.ToString()}");
                 return false;
             }
         }
