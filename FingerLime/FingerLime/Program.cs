@@ -21,9 +21,9 @@ namespace FingerLime {
             Logger logger = new Logger(Logger.V);
 
             var sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
-
             Logger.Write(Logger.V, "START");
+            Logger.Write(Logger.V, "■計画深さメッシュデータ 作成");
+            sw.Start();
 
             XYD origin = new XYD(0, 0);
 
@@ -81,16 +81,13 @@ namespace FingerLime {
                 y += 2;
             }
 
-            //Logger.Write(Logger.D, "---------------------------------------------------------------------------");
-            //Logger.Write(Logger.D, "真北を上に方向を決める");
+            // 真北を上に
             // 公共座標で扱っているので縦軸X、横軸Yで考える（数学軸なら縦軸Y、横軸X）
             double t = Math.Atan2(0 - origin.Y, 1 - origin.X);
             // 指定したモードの範囲内にラジアンを収める
             double direction = CoordinateMath.Clamp(2, t);
 
-            //Logger.Write(Logger.D, "---------------------------------------------------------------------------");
-            //Logger.Write(Logger.D, "点群パラメータに最も近い位置に原点を寄せたときの原点座標を求めます");
-
+            // 範囲を絞るために計画工区に寄せた原点を求めます。
             double minX = double.NaN;
             double minY = double.NaN;
 
@@ -129,13 +126,10 @@ namespace FingerLime {
 
             CoordinateMath.ToPublic(minX, minY, origin.X, origin.Y, -direction, ref originX, ref originY);
 
+            // 範囲を絞るために計画工区に寄せた原点
             XYD shiftOrigin = new XYD(originX, originY);
-            //Logger.Write(Logger.D, $"原点座標 X:0 → {shiftOrigin.X}, Y:0 → {shiftOrigin.Y}");
 
-            //Logger.Write(Logger.D, "---------------------------------------------------------------------------");
-            //Logger.Write(Logger.D, $"点群パラメータが {meshLength}×{meshLength} のメッシュに収まるかチェックします");
-            //Logger.Write(Logger.D, $"メートル換算で {meshLength * meshPitch}m × {meshLength * meshPitch}m");
-
+            // 5000マス×5000マスのメッシュに収まるかチェックします。
             double maxX = double.NaN;
             double maxY = double.NaN;
             for (int i = 0; i < xyPoints.Count; i++) {
@@ -152,8 +146,6 @@ namespace FingerLime {
 
             }
 
-            //Logger.Write(Logger.D, $"点群パラメータのうち最も遠い点 X:{maxX} Y:{maxY}");
-
             // MeshLength * MeshLength に収まっているか
             // 最も遠い公共座標(単位:m)をマス目換算して 50 / 0.5 = 100
             // シフト原点もマス目換算したもので引き算。
@@ -164,7 +156,7 @@ namespace FingerLime {
             //else
             //    Logger.Write(Logger.D, $"outside x:{maxX} y:{maxY}");
 
-            DepthArray depthArray = new DepthArray(meshLength, xyPoints, shiftOrigin, meshPitch);
+            PlanDepthArray depthArray = new PlanDepthArray(meshLength, meshPitch, shiftOrigin, xyPoints);
             depthArray.Create();
 
             sw.Stop();
@@ -174,8 +166,18 @@ namespace FingerLime {
             Logger.Write(Logger.V, $"　{ts}");
             Logger.Write(Logger.V, $"　{ts.Hours}時間 {ts.Minutes}分 {ts.Seconds}秒 {ts.Milliseconds}ミリ秒");
             Logger.Write(Logger.V, $"　{sw.ElapsedMilliseconds}ミリ秒");
+            Logger.Write(Logger.V, "END");
 
-            int length = depthArray.Depths.Length;
+
+
+
+
+            var sw1 = new System.Diagnostics.Stopwatch();
+            Logger.Write(Logger.V, "START");
+            sw1.Start();
+            Logger.Write(Logger.V, "■計画深さメッシュデータ ファイル出力");
+
+            int length = depthArray.PlanDepths.Length;
             double seekStartX = 0.25 + shiftOrigin.X;
             double seekStartY = 0.25 + shiftOrigin.Y;
 
@@ -185,20 +187,52 @@ namespace FingerLime {
             StreamWriter writer = new StreamWriter("test.txt", true, Encoding.UTF8);
             for (int i = 0; i < length; i++) {
                 int _y = Math.DivRem(i, meshLength, out int _x);
-                //Logger.Write(Logger.V, $"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{depthArray.Depths[i] / 10.0}");
                 try {
-                    if (depthArray.Depths[i] == -1) {
-                        writer.WriteLine($"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{depthArray.Depths[i]}");
+                    if (depthArray.PlanDepths[i] == -1) {
+                        writer.WriteLine($"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{depthArray.PlanDepths[i]}");
                     } else {
-                        writer.WriteLine($"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{depthArray.Depths[i] / 10.0}");
+                        writer.WriteLine($"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{depthArray.PlanDepths[i] / 10.0}");
                     }
 
                 } catch (Exception e) {
-                    //Logger.Write(Logger.E, e.ToString());
+                    Logger.Write(Logger.E, e.ToString());
                     break;
                 }
             }
             writer.Close();
+
+            sw1.Stop();
+
+            Logger.Write(Logger.V, "■処理にかかった時間");
+            TimeSpan ts1 = sw1.Elapsed;
+            Logger.Write(Logger.V, $"　{ts1}");
+            Logger.Write(Logger.V, $"　{ts1.Hours}時間 {ts1.Minutes}分 {ts1.Seconds}秒 {ts1.Milliseconds}ミリ秒");
+            Logger.Write(Logger.V, $"　{sw1.ElapsedMilliseconds}ミリ秒"); 
+            Logger.Write(Logger.V, "END");
+
+
+
+            var sw2 = new System.Diagnostics.Stopwatch();
+            Logger.Write(Logger.V, "START");
+            sw2.Start();
+            Logger.Write(Logger.V, "■実績深さメッシュデータ 作成");
+
+            XYD prevL = new XYD(5.12, 5.12);
+            XYD prevR = new XYD(8.12, 8.12);
+            XYD currentL = new XYD(8.12, 2.12);
+            XYD currentR = new XYD(11.12, 5.12);
+
+
+
+
+
+            sw2.Stop();
+
+            Logger.Write(Logger.V, "■処理にかかった時間");
+            TimeSpan ts2 = sw2.Elapsed;
+            Logger.Write(Logger.V, $"　{ts2}");
+            Logger.Write(Logger.V, $"　{ts2.Hours}時間 {ts2.Minutes}分 {ts2.Seconds}秒 {ts2.Milliseconds}ミリ秒");
+            Logger.Write(Logger.V, $"　{sw2.ElapsedMilliseconds}ミリ秒");
             Logger.Write(Logger.V, "END");
 
             Console.ReadLine();

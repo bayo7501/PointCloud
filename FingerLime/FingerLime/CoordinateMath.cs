@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FingerLime {
     class CoordinateMath {
@@ -146,5 +147,141 @@ namespace FingerLime {
             double ans = vx1 * vy2 - vy1 * vx2;
             return ans;
         }
+
+        /// <summary>
+        /// 内外判定(X軸上はエリア外となる)
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="xList"></param>
+        /// <param name="yList"></param>
+        /// <returns></returns>
+        public static int CrossCount(double x, double y, List<double> xList, List<double> yList) {
+            int crossCount = 0;
+            if (xList.Count == yList.Count && xList.Count > 0 && yList.Count > 0) {
+                int xCount = xList.Count;
+
+                // 判定位置取得
+                double x0value = xList[0];
+                double y0value = yList[0];
+
+                bool x0flag = (x <= x0value);
+                bool y0flag = (y <= y0value);
+
+                // 判定点
+                double x1value = double.NaN;
+                double y1value = double.NaN;
+                bool x1flag = false;
+                bool y1flag = false;
+
+                for (int i = 1; i <= xCount; i++) {
+                    // 判定点を取り出し
+                    if (i == xCount) {
+                        x1value = xList[0];
+                        y1value = yList[0];
+                    } else {
+                        x1value = xList[i];
+                        y1value = yList[i];
+                    }
+                    x1flag = (x <= x1value);
+                    y1flag = (y <= y1value);
+
+                    if (y0flag != y1flag) {
+                        // 線分はレイを横切る可能性あり。
+                        if (x0flag == x1flag) {
+                            // 線分の２端点は対象点に対して両方右か両方左にある
+                            if (x0flag) {
+                                // 完全に右。⇒線分はレイを横切る
+                                crossCount += (y0flag ? -1 : 1);
+                                // 上から下にレイを横切るときには、交差回数を１引く、下から上は１足す。
+                            }
+                        } else {
+                            // レイと交差するかどうか、対象点と同じ深さで、対象点の右で交差するか、左で交差するかを求める。
+                            if (x <= (x0value + (x1value - x0value) * (y - y0value) / (y1value - y0value))) {
+                                // 線分は、対象点と同じ深さで、対象点の右で交差する。⇒線分はレイを横切る
+                                crossCount += (y0flag ? -1 : 1);
+                                // 上から下にレイを横切るときには、交差回数を１引く、下から上は１足す。
+                            }
+                        }
+                    }
+                    x0value = x1value;
+                    y0value = y1value;
+                    x0flag = x1flag;
+                    y0flag = y1flag;
+                }
+            }
+            return crossCount;
+        }
+
+        /// <summary>
+        /// 距離計算
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="x2"></param>
+        /// <param name="y2"></param>
+        /// <returns></returns>
+        public static double Distance(double x, double y, double x2, double y2) {
+            double distance = Math.Sqrt((x2 - x) * (x2 - x) + (y2 - y) * (y2 - y));
+
+            return distance;
+        }
+
+        /// <summary>
+        /// 四角形の対角線とある線分の延長上で交わる場合の交点を求めます。
+        /// </summary>
+        /// <param name="p0">対角線の点P0</param>
+        /// <param name="p1">対角線の点P1</param>
+        /// <param name="p2">メッシュの中心の点P2</param>
+        /// <param name="p3">対角線と向かい合う点P3</param>
+        /// <param name="p">P0-P1とP2-P3の交点</param>
+        /// <returns>四角形の対角線とある線分の延長上で交わる場合、真</returns>
+        public static bool Intersection(XYD p0, XYD p1, XYD p2, XYD p3, out XYD p) {
+            p = null;
+            double s, t;
+
+            /*
+             *      +---+---+---+
+             *      |         ／|
+             *   -  +       ／  +
+             *      |  *  ／    |
+             *      +   ／   *  +  +
+             *      | ／        |
+             *      +---+---+---+
+             */
+
+            //s = (p0.X - p1.X) * (p2.Y - p0.Y) + (p0.Y - p1.Y) * (p0.X - p2.X);
+            //t = (p0.X - p1.X) * (p3.Y - p0.Y) + (p0.Y - p1.Y) * (p0.X - p3.X);
+            //if (s * t >= 0)
+            //    return false;
+
+            s = (p2.X - p3.X) * (p0.Y - p2.Y) + (p2.Y - p3.Y) * (p2.X - p0.X);
+            t = (p2.X - p3.X) * (p1.Y - p2.Y) + (p2.Y - p3.Y) * (p2.X - p1.X);
+            if (s * t >= 0)
+                return false;
+
+            // 線分が重なっている場合、交差していない
+            // 線分の先端が触れている場合、交差していない
+            // 線分が交わって交差した
+
+            // ついでに交点も求める
+            double a1 = p0.X - p1.X;
+            double b1 = p1.Y - p0.Y;
+            double c1 = (p1.Y - p0.Y) * p0.X - (p1.X - p0.X) * p0.Y;
+
+            double a2 = p2.X - p3.X;
+            double b2 = p3.Y - p2.Y;
+            double c2 = (p3.Y - p2.Y) * p2.X - (p3.X - p2.X) * p2.Y;
+
+            //double x = (c1 * b2 - c2 * b1) / (a1 * b2 - a2 * b1);
+            //double y = (a1 * c2 - a2 * c1) / (a1 * b2 - a2 * b1);
+            double y = (c1 * b2 - c2 * b1) / (a1 * b2 - a2 * b1);
+            double x = (a1 * c2 - a2 * c1) / (a1 * b2 - a2 * b1);
+
+            p = new XYD(x, y);
+
+            return true;
+        }
+
     }
 }
