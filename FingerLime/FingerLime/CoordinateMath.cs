@@ -65,14 +65,18 @@ namespace FingerLime {
                 // シフト
                 double localShiftX = x - shiftX;
                 double localShiftY = y - shiftY;
-                localShiftX = ToRoundDown(localShiftX + 0.00001, 4);
-                localShiftY = ToRoundDown(localShiftY + 0.00001, 4);
+                //localShiftX = ToRoundDown(localShiftX + 0.00001, 4);
+                //localShiftY = ToRoundDown(localShiftY + 0.00001, 4);
+                localShiftX = ToRoundDown(localShiftX, 4);
+                localShiftY = ToRoundDown(localShiftY, 4);
 
                 // 回転
                 double localX = Math.Cos(radian) * localShiftX - Math.Sin(radian) * localShiftY;
                 double localY = Math.Sin(radian) * localShiftX + Math.Cos(radian) * localShiftY;
-                localX = ToRoundDown(localX + 0.00001, 4);
-                localY = ToRoundDown(localY + 0.00001, 4);
+                //localX = ToRoundDown(localX + 0.00001, 4);
+                //localY = ToRoundDown(localY + 0.00001, 4);
+                localX = ToRoundDown(localX, 4);
+                localY = ToRoundDown(localY, 4);
 
                 outX = localX;
                 outY = localY;
@@ -99,14 +103,18 @@ namespace FingerLime {
                 // 回転
                 double localX = Math.Cos(-radian) * x - Math.Sin(-radian) * y;
                 double localY = Math.Sin(-radian) * x + Math.Cos(-radian) * y;
-                localX = ToRoundDown(localX + 0.00001, 4);
-                localY = ToRoundDown(localY + 0.00001, 4);
+                //localX = ToRoundDown(localX + 0.00001, 4);
+                //localY = ToRoundDown(localY + 0.00001, 4);
+                localX = ToRoundDown(localX, 4);
+                localY = ToRoundDown(localY, 4);
 
                 // シフト
                 double localShiftX = localX + shiftX;
                 double localShiftY = localY + shiftY;
-                localShiftX = ToRoundDown(localShiftX + 0.00001, 4);
-                localShiftY = ToRoundDown(localShiftY + 0.00001, 4);
+                //localShiftX = ToRoundDown(localShiftX + 0.00001, 4);
+                //localShiftY = ToRoundDown(localShiftY + 0.00001, 4);
+                localShiftX = ToRoundDown(localShiftX, 4);
+                localShiftY = ToRoundDown(localShiftY, 4);
 
                 outX = localShiftX;
                 outY = localShiftY;

@@ -40,10 +40,10 @@ namespace FingerLime {
             // 施工エリア作成開始点として、ここから施工エリアを作成。
 
             // 施工エリア作成開始点
-            int x = 1;
-            int y = 1;
+            double x = -1.1234;
+            double y = -1.6789;
             // 深さは一律で10m
-            int d = 10;
+            double d = 10;
             /*
              * 作りたいのはこんなカンジ
              *   |-----|-----|-----|
@@ -156,7 +156,7 @@ namespace FingerLime {
             // 使用するマス目がメッシュサイズの上限を超えていないかチェック
 
             //if (meshLength >= maxX / meshPitch - shiftOrigin.X / meshPitch & meshLength >= maxY / meshPitch - shiftOrigin.Y / meshPitch)
-            //    Logger.Write(Logger.D, "indide");
+            //    Logger.Write(Logger.D, "inside");
             //else
             //    Logger.Write(Logger.D, $"outside x:{maxX} y:{maxY}");
 
