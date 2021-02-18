@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,14 +17,17 @@ namespace FingerLime {
         /// </summary>
         private static readonly double meshPitch = 0.5;
 
+        /// <summary>
+        /// エントリポイント
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args) {
 
             Logger logger = new Logger(Logger.V);
 
-            var sw = new System.Diagnostics.Stopwatch();
-            Logger.Write(Logger.V, "START");
-            Logger.Write(Logger.V, "■計画深さメッシュデータ 作成");
+            var sw = new Stopwatch();
             sw.Start();
+            Logger.Write(Logger.V, "■計画レイヤ 作成 START");
 
             XYD origin = new XYD(0, 0);
 
@@ -156,42 +160,41 @@ namespace FingerLime {
             //else
             //    Logger.Write(Logger.D, $"outside x:{maxX} y:{maxY}");
 
-            PlanDepthArray depthArray = new PlanDepthArray(meshLength, meshPitch, shiftOrigin, xyPoints);
-            depthArray.Create();
+            PlanDepthArray planDepth = new PlanDepthArray(meshLength, meshPitch, shiftOrigin, xyPoints);
+            planDepth.Create();
 
             sw.Stop();
 
-            Logger.Write(Logger.V, "■処理にかかった時間");
-            TimeSpan ts = sw.Elapsed;
-            Logger.Write(Logger.V, $"　{ts}");
-            Logger.Write(Logger.V, $"　{ts.Hours}時間 {ts.Minutes}分 {ts.Seconds}秒 {ts.Milliseconds}ミリ秒");
+            Logger.Write(Logger.V, "■計画レイヤ 作成 処理にかかった時間");
+            Logger.Write(Logger.V, $"　{sw.Elapsed}");
+            Logger.Write(Logger.V, $"　{sw.Elapsed.Hours}時間 {sw.Elapsed.Minutes}分 {sw.Elapsed.Seconds}秒 {sw.Elapsed.Milliseconds}ミリ秒");
             Logger.Write(Logger.V, $"　{sw.ElapsedMilliseconds}ミリ秒");
-            Logger.Write(Logger.V, "END");
+            Logger.Write(Logger.V, "■計画レイヤ 作成 END");
 
 
 
 
+            double seekStartX = 0;
+            double seekStartY = 0;
 
-            var sw1 = new System.Diagnostics.Stopwatch();
-            Logger.Write(Logger.V, "START");
-            sw1.Start();
-            Logger.Write(Logger.V, "■計画深さメッシュデータ ファイル出力");
+            sw.Restart();
+            Logger.Write(Logger.V, "■計画レイヤ ファイル出力 START");
 
-            int length = depthArray.PlanDepths.Length;
-            double seekStartX = 0.25 + shiftOrigin.X;
-            double seekStartY = 0.25 + shiftOrigin.Y;
+            int planLength = planDepth.PlanDepths.Length;
+            seekStartX = 0.25 + shiftOrigin.X;
+            seekStartY = 0.25 + shiftOrigin.Y;
 
-            if(File.Exists("test.txt")){
-                File.Delete("test.txt");
+            if (File.Exists("plan.txt")) {
+                File.Delete("plan.txt");
             }
-            StreamWriter writer = new StreamWriter("test.txt", true, Encoding.UTF8);
-            for (int i = 0; i < length; i++) {
+            StreamWriter planWriter = new StreamWriter("plan.txt", true, Encoding.UTF8);
+            for (int i = 0; i < planLength; i++) {
                 int _y = Math.DivRem(i, meshLength, out int _x);
                 try {
-                    if (depthArray.PlanDepths[i] == -1) {
-                        writer.WriteLine($"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{depthArray.PlanDepths[i]}");
+                    if (planDepth.PlanDepths[i] == -1) {
+                        planWriter.WriteLine($"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{planDepth.PlanDepths[i]}");
                     } else {
-                        writer.WriteLine($"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{depthArray.PlanDepths[i] / 10.0}");
+                        planWriter.WriteLine($"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{planDepth.PlanDepths[i] / 10.0}");
                     }
 
                 } catch (Exception e) {
@@ -199,41 +202,86 @@ namespace FingerLime {
                     break;
                 }
             }
-            writer.Close();
+            planWriter.Close();
 
-            sw1.Stop();
+            sw.Stop();
 
-            Logger.Write(Logger.V, "■処理にかかった時間");
-            TimeSpan ts1 = sw1.Elapsed;
-            Logger.Write(Logger.V, $"　{ts1}");
-            Logger.Write(Logger.V, $"　{ts1.Hours}時間 {ts1.Minutes}分 {ts1.Seconds}秒 {ts1.Milliseconds}ミリ秒");
-            Logger.Write(Logger.V, $"　{sw1.ElapsedMilliseconds}ミリ秒"); 
+            Logger.Write(Logger.V, "■計画レイヤ ファイル出力 処理にかかった時間");
+            //TimeSpan ts1 = sw.Elapsed;
+            Logger.Write(Logger.V, $"　{sw.Elapsed}");
+            Logger.Write(Logger.V, $"　{sw.Elapsed.Hours}時間 {sw.Elapsed.Minutes}分 {sw.Elapsed.Seconds}秒 {sw.Elapsed.Milliseconds}ミリ秒");
+            Logger.Write(Logger.V, $"　{sw.ElapsedMilliseconds}ミリ秒");
+            Logger.Write(Logger.V, "■計画レイヤ ファイル出力 END");
+
+
+
+            sw.Restart();
+            Logger.Write(Logger.V, "■実績レイヤ 作成 START");
+
+            //XYD prevL = new XYD(5.12, 5.12);
+            //XYD prevR = new XYD(8.12, 8.12);
+            //XYD currentL = new XYD(8.12, 2.12);
+            //XYD currentR = new XYD(11.12, 5.12);
+
+            List<XYD> historyL = new List<XYD>();
+            historyL.Add(new XYD(5.12, 5.12, 5));
+            historyL.Add(new XYD(8.12, 8.12, 5));
+            List<XYD> historyR = new List<XYD>();
+            historyR.Add(new XYD(8.12, 2.12, 5));
+            historyR.Add(new XYD(11.12, 5.12, 5));
+
+            ActionDepthArray actionDepth = new ActionDepthArray(meshLength, meshPitch, shiftOrigin, planDepth.PlanDepths, historyL, historyR);
+            actionDepth.Create();
+
+
+
+            sw.Stop();
+
+            Logger.Write(Logger.V, "■実績レイヤ 作成 処理にかかった時間");
+            //TimeSpan ts2 = sw.Elapsed;
+            Logger.Write(Logger.V, $"　{sw.Elapsed}");
+            Logger.Write(Logger.V, $"　{sw.Elapsed.Hours}時間 {sw.Elapsed.Minutes}分 {sw.Elapsed.Seconds}秒 {sw.Elapsed.Milliseconds}ミリ秒");
+            Logger.Write(Logger.V, $"　{sw.ElapsedMilliseconds}ミリ秒");
             Logger.Write(Logger.V, "END");
 
 
 
-            var sw2 = new System.Diagnostics.Stopwatch();
-            Logger.Write(Logger.V, "START");
-            sw2.Start();
-            Logger.Write(Logger.V, "■実績深さメッシュデータ 作成");
+            sw.Restart();
+            Logger.Write(Logger.V, "■実績レイヤ ファイル出力 START");
 
-            XYD prevL = new XYD(5.12, 5.12);
-            XYD prevR = new XYD(8.12, 8.12);
-            XYD currentL = new XYD(8.12, 2.12);
-            XYD currentR = new XYD(11.12, 5.12);
+            int length = actionDepth.ActionDepths.Length;
+            seekStartX = 0.25 + shiftOrigin.X;
+            seekStartY = 0.25 + shiftOrigin.Y;
 
+            if (File.Exists("action.txt")) {
+                File.Delete("action.txt");
+            }
+            StreamWriter actionWriter = new StreamWriter("action.txt", true, Encoding.UTF8);
+            for (int i = 0; i < length; i++) {
+                int _y = Math.DivRem(i, meshLength, out int _x);
+                try {
+                    if (actionDepth.ActionDepths[i] == -1) {
+                        actionWriter.WriteLine($"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{actionDepth.ActionDepths[i]}");
+                    } else {
+                        actionWriter.WriteLine($"X:{ seekStartX + _x * meshPitch } Y:{seekStartY + _y * meshPitch} Depth:{actionDepth.ActionDepths[i] / 10.0}");
+                    }
 
+                } catch (Exception e) {
+                    Logger.Write(Logger.E, e.ToString());
+                    break;
+                }
+            }
+            actionWriter.Close();
 
+            sw.Stop();
 
+            Logger.Write(Logger.V, "■実績レイヤ ファイル出力 処理にかかった時間");
+            //TimeSpan ts1 = sw.Elapsed;
+            Logger.Write(Logger.V, $"　{sw.Elapsed}");
+            Logger.Write(Logger.V, $"　{sw.Elapsed.Hours}時間 {sw.Elapsed.Minutes}分 {sw.Elapsed.Seconds}秒 {sw.Elapsed.Milliseconds}ミリ秒");
+            Logger.Write(Logger.V, $"　{sw.ElapsedMilliseconds}ミリ秒");
+            Logger.Write(Logger.V, "■実績レイヤ ファイル出力 END");
 
-            sw2.Stop();
-
-            Logger.Write(Logger.V, "■処理にかかった時間");
-            TimeSpan ts2 = sw2.Elapsed;
-            Logger.Write(Logger.V, $"　{ts2}");
-            Logger.Write(Logger.V, $"　{ts2.Hours}時間 {ts2.Minutes}分 {ts2.Seconds}秒 {ts2.Milliseconds}ミリ秒");
-            Logger.Write(Logger.V, $"　{sw2.ElapsedMilliseconds}ミリ秒");
-            Logger.Write(Logger.V, "END");
 
             Console.ReadLine();
         }

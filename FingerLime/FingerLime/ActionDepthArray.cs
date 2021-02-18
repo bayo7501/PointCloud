@@ -71,15 +71,15 @@ namespace FingerLime {
         /// コンストラクタ
         /// </summary>
         /// <param name="meshLength">5000マス×5000マス</param>
-        /// <param name="shiftOrigin">0.5m/1マス  </param>
-        /// <param name="meshPitch">範囲を絞るために計画工区に寄せた原点</param>
+        /// <param name="meshPitch">0.5m/1マス</param>
+        /// <param name="shiftOrigin">範囲を絞るために計画工区に寄せた原点</param>
         /// <param name="planDepths">計画工区データ(公共のX軸リスト×Y軸リスト)</param>
         /// <param name="historyL">施工履歴L</param>
         /// <param name="historyR">施工履歴R</param>
-        public ActionDepthArray(int meshLength, XYD shiftOrigin, double meshPitch, short[] planDepths, List<XYD> historyL, List<XYD> historyR) {
+        public ActionDepthArray(int meshLength, double meshPitch, XYD shiftOrigin, short[] planDepths, List<XYD> historyL, List<XYD> historyR) {
             this.meshLength = meshLength;
-            this.shiftOrigin = shiftOrigin;
             this.meshPitch = meshPitch;
+            this.shiftOrigin = shiftOrigin;
             this.planDepths = planDepths;
             this.historyL = historyL;
             this.historyR = historyR;
@@ -174,19 +174,19 @@ namespace FingerLime {
                         maxY = rectangle.D.Y;
                     }
                     double minifyMaxY = Math.Ceiling(maxY);
-                    // 外接する四角形の4点
-                    XYD minifyA = new XYD(minX, minY);
-                    XYD minifyB = new XYD(maxX, minY);
-                    XYD minifyC = new XYD(maxX, maxY);
-                    XYD minifyD = new XYD(minX, maxY);
+                    //// 外接する四角形の4点
+                    //XYD minifyA = new XYD(minX, minY);
+                    //XYD minifyB = new XYD(maxX, minY);
+                    //XYD minifyC = new XYD(maxX, maxY);
+                    //XYD minifyD = new XYD(minX, maxY);
 
-                    int meshLengthY = (int)((maxY - minY) / 0.5);
-                    int meshLengthX = (int)((maxX - minX) / 0.5);
+                    int meshLengthY = (int)((minifyMaxY - minifyMinY) / 0.5);
+                    int meshLengthX = (int)((minifyMaxX - minifyMinX) / 0.5);
 
                     // 深さ算出処理開始点X
-                    double seekStartX = 0.25 + minX;
+                    double seekStartX = 0.25 + minifyMinX;
                     // 深さ算出処理開始点Y
-                    double seekStartY = 0.25 + minY;
+                    double seekStartY = 0.25 + minifyMinY;
 
                     for (int y = 0; y < meshLengthY; y++) {
                         // 走査対象のメッシュ中心点Y

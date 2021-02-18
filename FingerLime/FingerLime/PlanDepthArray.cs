@@ -146,19 +146,19 @@ namespace FingerLime {
                         maxY = rectangle.D.Y;
                     }
                     double minifyMaxY = Math.Ceiling(maxY);
-                    // 外接する四角形の4点
-                    XYD minifyA = new XYD(minX, minY);
-                    XYD minifyB = new XYD(maxX, minY);
-                    XYD minifyC = new XYD(maxX, maxY);
-                    XYD minifyD = new XYD(minX, maxY);
+                    //// 外接する四角形の4点
+                    //XYD minifyA = new XYD(minX, minY);
+                    //XYD minifyB = new XYD(maxX, minY);
+                    //XYD minifyC = new XYD(maxX, maxY);
+                    //XYD minifyD = new XYD(minX, maxY);
 
-                    int meshLengthY = (int)((maxY - minY) / 0.5);
-                    int meshLengthX = (int)((maxX - minX) / 0.5);
+                    int meshLengthY = (int)((minifyMaxY - minifyMinY) / 0.5);
+                    int meshLengthX = (int)((minifyMaxX - minifyMinX) / 0.5);
 
                     // 深さ算出処理開始点X
-                    double seekStartX = 0.25 + minX;
+                    double seekStartX = 0.25 + minifyMinX;
                     // 深さ算出処理開始点Y
-                    double seekStartY = 0.25 + minY;
+                    double seekStartY = 0.25 + minifyMinY;
 
                     for (int y = 0; y < meshLengthY; y++) {
                         // 走査対象のメッシュ中心点Y
