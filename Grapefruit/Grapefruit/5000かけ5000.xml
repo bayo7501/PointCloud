@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LandXML xmlns="http://www.landxml.org/schema/LandXML-1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.landxml.org/schema/LandXML-1.2 http://www.landxml.org/schema/LandXML-1.2/LandXML-1.2.xsd" date="2021-03-08" time="10:54:10" version="1.2" language="Japanese" readOnly="false">
+	<Units>
+		<Metric areaUnit="squareMeter" linearUnit="meter" volumeUnit="cubicMeter" temperatureUnit="celsius" pressureUnit="HPA" angularUnit="decimal dd.mm.ss" directionUnit="decimal dd.mm.ss"></Metric>
+	</Units>
+	<Project name="新工事"></Project>
+	<Application name="EX-TREND武蔵 建設CAD" manufacturer="FUKUI COMPUTER,Inc" version="20" manufacturerURL="const.fukuicompu.co.jp"></Application>
+	<Surfaces>
+		<Surface name="切削:計画層" desc="FinishedGrade">
+			<Definition surfType="TIN">
+				<Pnts>
+					<P id="10001">100.000000 98.000000 0.000000</P>
+					<P id="10002">110.000000 98.000000 0.000000</P>
+					<P id="11001">100.000000 100.000000 0.000000</P>
+					<P id="11002">110.000000 100.000000 0.000000</P>
+					<P id="12001">100.000000 102.000000 0.000000</P>
+					<P id="12002">110.000000 102.000000 0.000000</P>
+				</Pnts>
+				<Faces>
+					<F>11001 10001 10002</F>
+					<F>11001 10002 11002</F>
+					<F>11001 11002 12002</F>
+					<F>11001 12002 12001</F>
+				</Faces>
+			</Definition>
+		</Surface>
+		<Surface name="切削:切削" desc="">
+			<Definition surfType="TIN">
+				<Pnts>
+					<P id="10001">0.000000 0.000000 -0.050000</P>
+					<P id="10002">2500.000000 0.000000 -0.050000</P>
+					<P id="11001">0.000000 1250.000000 -0.050000</P>
+					<P id="11002">2500.000000 1250.000000 -0.050000</P>
+					<P id="12001">0.000000 2500.000000 -0.050000</P>
+					<P id="12002">2500.000000 2500.000000 -0.050000</P>
+				</Pnts>
+				<Faces>
+					<F>11001 10001 10002</F>
+					<F>11001 10002 11002</F>
+					<F>11001 11002 12002</F>
+					<F>11001 12002 12001</F>
+				</Faces>
+			</Definition>
+		</Surface>
+	</Surfaces>
+</LandXML>
